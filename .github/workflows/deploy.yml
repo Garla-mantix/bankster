@@ -38,6 +38,13 @@ jobs:
       - name: Copy index.html to 404.html for SPA routing
         run: cp release/wwwroot/index.html release/wwwroot/404.html
 
+      - name: Debug - List files and show index.html
+        run: |
+          echo "=== Files in release/wwwroot ==="
+          ls -la release/wwwroot/
+          echo "=== index.html contents ==="
+          cat release/wwwroot/index.html
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
