@@ -4,174 +4,170 @@
 
 <PageTitle>Bankster - History</PageTitle>
 
-<h1>History</h1>
+<div class="page-enter">
+    <h1>History</h1>
+    <p style="margin-bottom: 1.5rem;">Filter and sort your transaction records.</p>
 
-@*Form for sorting and filtering account history*@
-<EditForm Model="_filterModel">
-    @*Label and dropdown menu for choosing an account*@
-    <div class="accountfield">
-        <label>Select Account:</label>
-        <InputSelect TValue="Guid?"
-                     class="inputfield"
-                     Value="_filterModel.SelectedAccountId"
-                     ValueChanged="(Guid? v) => { _filterModel.SelectedAccountId = v; ApplyFilters(); }"
-                     ValueExpression="() => _filterModel.SelectedAccountId">
-            <option value="">Choose account</option>
-            @foreach (var account in _accounts)
-            {
-                <option value="@account.Id">@account.Name (@account.CurrencyType)</option>
-            }
-        </InputSelect>
-    </div>
-
-    @*Making sure an account has been selected before showing other filters*@
-    @if (_filterModel.SelectedAccountId != null 
-         && _accounts.Any(a => a.Id == _filterModel.SelectedAccountId.Value))
-    {
-        // Label and dropdown menu for transaction type
+    <EditForm Model="_filterModel">
         <div class="accountfield">
-            <label>Transaction Type:</label>
-            <InputSelect TValue="TransactionType?"
-                         class="inputfield"
-                         Value="_filterModel.TransactionType"
-                         ValueChanged="(TransactionType? v) => { _filterModel.TransactionType = v; ApplyFilters(); }"
-                         ValueExpression="() => _filterModel.TransactionType">
-                <option value="">All types</option>
-                <option value="@TransactionType.Deposit">Deposit</option>
-                <option value="@TransactionType.Withdrawal">Withdrawal</option>
-                <option value="@TransactionType.Transfer">Transfer</option>
-            </InputSelect>
-        </div>
-        
-        // Label and dropdown menu for budget categories
-        <div class="accountfield">
-            <label>Category:</label>
-            <InputSelect TValue="BudgetCategory?" class="inputfield"
-                         Value="_filterModel.Category"
-                         ValueChanged="(BudgetCategory? v) => { _filterModel.Category = v; ApplyFilters(); }"
-                         ValueExpression="() => _filterModel.Category">
-                <option value="">All categories</option>
-                @foreach (var category in Enum.GetValues<BudgetCategory>())
+            <label>Select Account</label>
+            <InputSelect TValue="Guid?"
+                         Value="_filterModel.SelectedAccountId"
+                         ValueChanged="(Guid? v) => { _filterModel.SelectedAccountId = v; ApplyFilters(); }"
+                         ValueExpression="() => _filterModel.SelectedAccountId">
+                <option value="">Choose account</option>
+                @foreach (var account in _accounts)
                 {
-                    <option value="@category">@category</option>
+                    <option value="@account.Id">@account.Name (@account.CurrencyType)</option>
                 }
             </InputSelect>
         </div>
 
-        // Label and date picker for from-date
-        <div class="accountfield">
-            <label>From Date:</label>
-            <InputDate TValue="DateTime?" class="inputfield"
-                       Value="_filterModel.FromDate"
-                       ValueChanged="(DateTime? v) => { _filterModel.FromDate = v; ApplyFilters(); }"
-                       ValueExpression="() => _filterModel.FromDate"/>
-        </div>
+        @if (_filterModel.SelectedAccountId != null
+             && _accounts.Any(a => a.Id == _filterModel.SelectedAccountId.Value))
+        {
+            <div class="filter-section">
+                <div class="accountfield">
+                    <label>Transaction Type</label>
+                    <InputSelect TValue="TransactionType?"
+                                 Value="_filterModel.TransactionType"
+                                 ValueChanged="(TransactionType? v) => { _filterModel.TransactionType = v; ApplyFilters(); }"
+                                 ValueExpression="() => _filterModel.TransactionType">
+                        <option value="">All types</option>
+                        <option value="@TransactionType.Deposit">Deposit</option>
+                        <option value="@TransactionType.Withdrawal">Withdrawal</option>
+                        <option value="@TransactionType.Transfer">Transfer</option>
+                    </InputSelect>
+                </div>
 
-        // Label and date picker for to-date
-        <div class="accountfield">
-            <label>To Date:</label>
-            <InputDate TValue="DateTime?" class="inputfield"
-                       Value="_filterModel.ToDate"
-                       ValueChanged="(DateTime? v) => { _filterModel.ToDate = v; ApplyFilters(); }"
-                       ValueExpression="() => _filterModel.ToDate"/>
-        </div>
+                <div class="accountfield">
+                    <label>Category</label>
+                    <InputSelect TValue="BudgetCategory?"
+                                 Value="_filterModel.Category"
+                                 ValueChanged="(BudgetCategory? v) => { _filterModel.Category = v; ApplyFilters(); }"
+                                 ValueExpression="() => _filterModel.Category">
+                        <option value="">All categories</option>
+                        @foreach (var category in Enum.GetValues<BudgetCategory>())
+                        {
+                            <option value="@category">@category</option>
+                        }
+                    </InputSelect>
+                </div>
 
-        // Label and input field for min amount
-        <div class="accountfield">
-            <label>Min Amount:</label>
-            <InputNumber TValue="decimal?" class="inputfield"
-                         Value="_filterModel.MinAmount"
-                         ValueChanged="(decimal? v) => { _filterModel.MinAmount = v; ApplyFilters(); }"
-                         ValueExpression="() => _filterModel.MinAmount"/>
-        </div>
+                <div class="accountfield">
+                    <label>From Date</label>
+                    <InputDate TValue="DateTime?"
+                               Value="_filterModel.FromDate"
+                               ValueChanged="(DateTime? v) => { _filterModel.FromDate = v; ApplyFilters(); }"
+                               ValueExpression="() => _filterModel.FromDate"/>
+                </div>
 
-        // Label and input field for max amount
-        <div class="accountfield">
-            <label>Max Amount:</label>
-            <InputNumber TValue="decimal?" class="inputfield"
-                         Value="_filterModel.MaxAmount"
-                         ValueChanged="(decimal? v) => { _filterModel.MaxAmount = v; ApplyFilters(); }"
-                         ValueExpression="() => _filterModel.MaxAmount"/>
-        </div>
+                <div class="accountfield">
+                    <label>To Date</label>
+                    <InputDate TValue="DateTime?"
+                               Value="_filterModel.ToDate"
+                               ValueChanged="(DateTime? v) => { _filterModel.ToDate = v; ApplyFilters(); }"
+                               ValueExpression="() => _filterModel.ToDate"/>
+                </div>
 
-        // Dropdown menu for sorting options
-        <div class="accountfield">
-            <label>Sort By:</label>
-            <InputSelect TValue="string" class="inputfield"
-                         Value="_filterModel.SortOption"
-                         ValueChanged="(string v) => { _filterModel.SortOption = v; ApplyFilters(); }"
-                         ValueExpression="() => _filterModel.SortOption">
-                <option value="date_desc">Date (Newest)</option>
-                <option value="date_asc">Date (Oldest)</option>
-                <option value="amount_desc">Amount (High → Low)</option>
-                <option value="amount_asc">Amount (Low → High)</option>
-                <option value="type">Type</option>
-                <option value="category">Category</option>
-            </InputSelect>
-        </div>
+                <div class="accountfield">
+                    <label>Min Amount</label>
+                    <InputNumber TValue="decimal?"
+                                 Value="_filterModel.MinAmount"
+                                 ValueChanged="(decimal? v) => { _filterModel.MinAmount = v; ApplyFilters(); }"
+                                 ValueExpression="() => _filterModel.MinAmount"/>
+                </div>
 
-        // Button to reset filters and sorting
-        <button type="button" class="formbutton" @onclick="ResetFilters">Reset</button>
+                <div class="accountfield">
+                    <label>Max Amount</label>
+                    <InputNumber TValue="decimal?"
+                                 Value="_filterModel.MaxAmount"
+                                 ValueChanged="(decimal? v) => { _filterModel.MaxAmount = v; ApplyFilters(); }"
+                                 ValueExpression="() => _filterModel.MaxAmount"/>
+                </div>
+
+                <div class="accountfield">
+                    <label>Sort By</label>
+                    <InputSelect TValue="string"
+                                 Value="_filterModel.SortOption"
+                                 ValueChanged="(string v) => { _filterModel.SortOption = v; ApplyFilters(); }"
+                                 ValueExpression="() => _filterModel.SortOption">
+                        <option value="date_desc">Date (Newest)</option>
+                        <option value="date_asc">Date (Oldest)</option>
+                        <option value="amount_desc">Amount (High to Low)</option>
+                        <option value="amount_asc">Amount (Low to High)</option>
+                        <option value="type">Type</option>
+                        <option value="category">Category</option>
+                    </InputSelect>
+                </div>
+            </div>
+
+            <div class="filter-actions">
+                <button type="button" class="formbutton btn-secondary" @onclick="ResetFilters">Reset Filters</button>
+            </div>
+        }
+    </EditForm>
+
+    @if (_filterModel.SelectedAccountId == null ||
+         !_accounts.Any(a => a.Id == _filterModel.SelectedAccountId.Value))
+    {
+        <div class="empty-state">
+            <div class="empty-icon"><span class="bi bi-clock-history"></span></div>
+            <p>Please select an account to view its history.</p>
+        </div>
     }
-</EditForm>
-
-@*Validation*@
-@if (_filterModel.SelectedAccountId == null || 
-     !_accounts.Any(a => a.Id == _filterModel.SelectedAccountId.Value))
-{
-    <div class="accountfield"><p>Please select an account to view its history.</p></div>
-}
-else if (_transactions == null)
-{
-    <div class="accountfield"><p>Loading transactions...</p></div>
-}
-else if (!_transactions.Any())
-{
-    <div class="accountfield"><p>No transactions found.</p></div>
-}
-else
-{
-    // Table with columns for structuring transaction history
-    <table class="table-auto w-full border-collapse border border-gray-300 mt-4 mb-5">
-        <thead class="bg-gray-100">
-        <tr>
-            <th class="border px-4 py-2">Date</th>
-            <th class="border px-4 py-2">Account</th>
-            <th class="border px-4 py-2">Type</th>
-            <th class="border px-4 py-2">Category</th>
-            <th class="border px-4 py-2">Amount</th>
-            <th class="border px-4 py-2">Related Account</th>
-            <th class="border px-4 py-2">Description</th>
-            <th class="border px-4 py-2">Balance After</th>
-        </tr>
-        </thead>
-        
-        @*Transaction history*@
-        <tbody>
-            @foreach (var t in _transactions)
-            {
-                <tr class="@GetTransactionRowClass(t.Type)">
-                    <td class="border px-4 py-2">@t.Timestamp.ToString("d'/'M/yyyy (HH:mm)")</td>
-                    <td class="border px-4 py-2">@GetAccountName(t.AccountId)</td>
-                    <td class="border px-4 py-2">@t.Type</td>
-                    <td class="border px-4 py-2">@t.Category</td>
-                    <td class="border px-4 py-2">@t.Amount.ToString("F2")</td>
-                    <td class="border px-4 py-2">@t.RelatedAccountName</td>
-                    <td class="border px-4 py-2">@t.Description</td>
-                    <td class="border px-4 py-2">@t.BalanceAfter.ToString("F2")</td>
-                </tr>
-            }
-        </tbody>
-    </table>
-}
+    else if (_transactions == null)
+    {
+        <p>Loading transactions...</p>
+    }
+    else if (!_transactions.Any())
+    {
+        <div class="empty-state">
+            <div class="empty-icon"><span class="bi bi-inbox"></span></div>
+            <p>No transactions found.</p>
+        </div>
+    }
+    else
+    {
+        <table class="history-table">
+            <thead>
+            <tr>
+                <th>Date</th>
+                <th>Account</th>
+                <th>Type</th>
+                <th>Category</th>
+                <th>Amount</th>
+                <th>Related Account</th>
+                <th>Description</th>
+                <th>Balance After</th>
+            </tr>
+            </thead>
+            <tbody>
+                @foreach (var t in _transactions)
+                {
+                    <tr class="@GetTransactionRowClass(t.Type)">
+                        <td>@t.Timestamp.ToString("d'/'M/yyyy (HH:mm)")</td>
+                        <td>@GetAccountName(t.AccountId)</td>
+                        <td><span class="badge @GetBadgeClass(t.Type)">@t.Type</span></td>
+                        <td>@t.Category</td>
+                        <td style="font-family: var(--font-mono); font-weight: 500;">@t.Amount.ToString("F2")</td>
+                        <td>@t.RelatedAccountName</td>
+                        <td>@t.Description</td>
+                        <td style="font-family: var(--font-mono); font-weight: 500;">@t.BalanceAfter.ToString("F2")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>
 
 @code {
     // Account shown in UI
     private List<BankAccount> _accounts = new();
-    
+
     // Filtered transactions based on selection
     private List<Transaction>? _transactions = new();
-    
+
     // Variable storing filter/sorting
     private readonly FilterModel _filterModel = new();
 
@@ -182,7 +178,7 @@ else
         _accounts = accounts.Cast<BankAccount>().ToList();
         _filterModel.SelectedAccountId = null;
         _transactions = new();
-        
+
         // Preselect clicked account from MyAccounts
         if (SelectedStatus.SelectedAccountId != Guid.Empty)
         {
@@ -198,7 +194,7 @@ else
         var selectedAccount = _filterModel.SelectedAccountId == null
             ? null
             : _accounts.FirstOrDefault(a => a.Id == _filterModel.SelectedAccountId.Value);
-        
+
         if (selectedAccount == null)
         {
             _transactions = new();
@@ -207,8 +203,8 @@ else
         }
 
         IEnumerable<Transaction> query = selectedAccount.Transactions;
-        
-        var fromDate = _filterModel.FromDate?.Date;       
+
+        var fromDate = _filterModel.FromDate?.Date;
         var toDateExclusive = _filterModel.ToDate?.Date.AddDays(1);
 
         if (fromDate.HasValue)
@@ -235,8 +231,8 @@ else
         {
             query = query.Where(t => t.Amount <= _filterModel.MaxAmount.Value);
         }
-            
-        
+
+
         // Sorting results based on selections
         query = _filterModel.SortOption switch
         {
@@ -275,6 +271,15 @@ else
         TransactionType.Deposit => "deposit-row",
         TransactionType.Withdrawal => "withdrawal-row",
         TransactionType.Transfer => "transfer-row",
+        _ => string.Empty
+    };
+
+    // Badge class for transaction type
+    private static string GetBadgeClass(TransactionType type) => type switch
+    {
+        TransactionType.Deposit => "badge-accent",
+        TransactionType.Withdrawal => "badge-danger",
+        TransactionType.Transfer => "badge-info",
         _ => string.Empty
     };
 

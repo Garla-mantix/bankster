@@ -1,11 +1,67 @@
-﻿@page "/"
+@page "/"
+@inject IAccountService AccountService
 
 <PageTitle>Bankster</PageTitle>
 
-<h1>Welcome to Bankster</h1>
+<div class="page-enter">
+    <h1>Welcome back</h1>
+    <p style="margin-bottom: 2rem;">Manage your finances with precision.</p>
 
-<p>View your existing accounts under <a href="/MyAccounts"><strong>My Accounts</strong></a>.</p>
-<p>If you don't have any accounts yet you can get started under <a href="/CreateAccount"><strong>Create Account</strong></a>!</p>
-<p><a href="/DepositWithdraw"><strong>Deposit / Withdraw</strong></a> is where you can put money into your account or take money out.</p>
-<p>To transfer money between accounts, go to <a href="/Transfer"><strong>Transfer</strong></a>.</p>
-<p>All history of transactions are viewable under <a href="/History"><strong>History</strong></a>!</p>
+    <div class="stats-row">
+        <div class="stat-chip">
+            <div class="stat-label">Total Accounts</div>
+            <div class="stat-value accent">@_accountCount</div>
+        </div>
+        <div class="stat-chip">
+            <div class="stat-label">Total Balance</div>
+            <div class="stat-value">@_totalBalance.ToString("N2") SEK</div>
+        </div>
+        <div class="stat-chip">
+            <div class="stat-label">Savings</div>
+            <div class="stat-value">@_savingsBalance.ToString("N2") SEK</div>
+        </div>
+    </div>
+
+    <h3>Quick Actions</h3>
+    <div class="feature-grid">
+        <a href="/MyAccounts" class="feature-card">
+            <div class="feature-icon"><span class="bi bi-wallet2"></span></div>
+            <h4>My Accounts</h4>
+            <p>View all your deposit and savings accounts at a glance.</p>
+        </a>
+        <a href="/CreateAccount" class="feature-card">
+            <div class="feature-icon"><span class="bi bi-plus-square-fill"></span></div>
+            <h4>Create Account</h4>
+            <p>Open a new deposit or savings account in seconds.</p>
+        </a>
+        <a href="/DepositWithdraw" class="feature-card">
+            <div class="feature-icon"><span class="bi bi-arrow-down-up"></span></div>
+            <h4>Deposit / Withdraw</h4>
+            <p>Add or remove funds from any of your accounts.</p>
+        </a>
+        <a href="/Transfer" class="feature-card">
+            <div class="feature-icon"><span class="bi bi-arrow-left-right"></span></div>
+            <h4>Transfer</h4>
+            <p>Move money between your accounts instantly.</p>
+        </a>
+        <a href="/History" class="feature-card">
+            <div class="feature-icon"><span class="bi bi-clock-history"></span></div>
+            <h4>History</h4>
+            <p>Browse, filter, and sort your full transaction history.</p>
+        </a>
+    </div>
+</div>
+
+@code {
+    private int _accountCount;
+    private decimal _totalBalance;
+    private decimal _savingsBalance;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var accounts = await AccountService.GetAccounts();
+        _accountCount = accounts.Count;
+        _totalBalance = accounts.Sum(a => a.Balance);
+        _savingsBalance = accounts.Where(a => a.AccountType == AccountType.Savings).Sum(a => a.Balance);
+    }
+}
