@@ -3,46 +3,48 @@
 @inject SignedInStatus Auth
 @inject NavigationManager Nav
 
-<h1>Sign In</h1>
+<PageTitle>Bankster - Sign In</PageTitle>
 
-@*Form for sign-in/sign-up*@
-<EditForm Model="this" OnValidSubmit="HandleSignIn">
-    
-    @* Label and input field for username *@
-    <div class="accountfield">
-        <label>Username:</label>
-        <InputText class="inputfield" @bind-Value="_username"/>
+<div class="signin-container">
+    <div class="signin-card">
+        <img src="Bankster-logo.png" alt="Bankster" class="signin-logo-img" />
+        <h1 class="signin-title">Bankster</h1>
+        <p class="signin-subtitle">Sign in to manage your finances</p>
+
+        <EditForm Model="this" OnValidSubmit="HandleSignIn">
+            <div class="accountfield">
+                <label>Username</label>
+                <InputText @bind-Value="_username" placeholder="Enter username" />
+            </div>
+
+            <div class="accountfield">
+                <label>PIN</label>
+                <InputText @bind-Value="_pin" type="password" inputmode="numeric" maxlength="4" placeholder="4-digit PIN" />
+            </div>
+
+            @if (!string.IsNullOrEmpty(_message))
+            {
+                <p class="@(_isSuccess ? "success-message" : "error-message")">@_message</p>
+            }
+
+            <div class="signin-buttons">
+                <button class="formbutton" type="submit">Sign In</button>
+                <button class="formbutton btn-secondary" type="button" @onclick="HandleSignUp">Sign Up</button>
+            </div>
+        </EditForm>
     </div>
-
-    @* Label and input field for PIN password *@
-    <div class="accountfield">
-        <label>PIN:</label>
-        <InputText class="inputfield" @bind-Value="_pin" type="password" inputmode="numeric" maxlength="4"/>
-    </div>
-
-    @* Buttons for sign-up and sign-in *@
-    <button class="formbutton" type="submit">Sign In</button>
-    <button class="formbutton" type="button" @onclick="HandleSignUp">Sign Up</button>
-
-    @*Success or error message*@
-    @if (!string.IsNullOrEmpty(_message))
-    {
-        <div class="accountfield">
-            <p class="@(_isSuccess ? "success-message" : "error-message")">@_message</p>
-        </div>
-    }
-</EditForm>
+</div>
 
 @code {
     // Variable storing username input
     private string _username = "";
-    
+
     // Variable storing PIN input
     private string _pin = "";
-    
+
     // Variable for feedback message
     private string? _message;
-    
+
     // Indicates whether account creation was successful or not
     private bool _isSuccess;
 
@@ -71,7 +73,7 @@
             Nav.NavigateTo("/");
             return;
         }
-        
+
         _message = "Wrong username or PIN.";
         _isSuccess = false;
         Console.WriteLine(_message);
@@ -105,7 +107,7 @@
             _isSuccess = false;
             return;
         }
-        
+
         // Validates PIN
         if (string.IsNullOrWhiteSpace(_pin))
         {
@@ -128,7 +130,7 @@
             _isSuccess = false;
             return;
         }
-        
+
         // Store username and PIN in local storage
         await Storage.SetItemAsync("username", _username);
         await Storage.SetItemAsync("pin", _pin);

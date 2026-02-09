@@ -3,71 +3,70 @@
 
 <PageTitle>Bankster - Create Account</PageTitle>
 
-<h1>Create Account</h1>
+<div class="page-enter">
+    <div class="card">
+        <div class="card-header-section">
+            <h1>Create Account</h1>
+            <p class="card-subtitle">Open a new deposit or savings account</p>
+        </div>
 
-@*Form for account creation*@
-<EditForm Model="_model" OnValidSubmit="CreateAccountAsync">
-    <DataAnnotationsValidator />
-    <ValidationSummary />
-    
-    @*Label and input field for account name*@
-    <div class="accountfield">
-        <label>Account Name:</label>
-        <InputText class="inputfield" @bind-Value="_model.Name" />
-    </div>
-    
-    @*Label and dropdown menu for account type*@
-    <div class="accountfield">
-        <label>Account Type:</label>
-        <InputSelect class="inputfield" @bind-Value="_model.AccountType">
-            <option value="">Pick type</option>
-            <option value="@AccountType.Deposit">Deposit Account</option>
-            <option value="@AccountType.Savings">Savings Account</option>
-        </InputSelect>
-    </div>
-    
-    @*Label and dropdown menu for currency type*@
-    <div class="accountfield">
-        <label>Currency:</label>
-        <InputSelect class="inputfield" @bind-Value="_model.CurrencyType">
-            <option value="">Pick type</option>
-            <option value="@CurrencyType.SEK">SEK</option>
-            @*<option value="@CurrencyType.EURO">EURO</option>*@
-        </InputSelect>
-    </div>
-    
-    @*Label and input field for initial balance *@
-    <div class="accountfield">
-        <label>Balance:</label>
-        <InputNumber class="inputfield" @bind-Value="_model.InitialBalance"></InputNumber>
-    </div>
-    
-    @*Button for submitting form and creating account*@
-    <button class="formbutton" type="submit">Create</button>
-    
-    @*Success or error messages*@
-    <div class="accountfield">
-        @if (!string.IsNullOrEmpty(_message))
-        {
-            <p class="@(_isSuccess ? "success-message" : "error-message")">@_message</p>
-            if (_isSuccess)
+        <EditForm Model="_model" OnValidSubmit="CreateAccountAsync">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            <div class="accountfield">
+                <label>Account Name</label>
+                <InputText @bind-Value="_model.Name" placeholder="e.g. Monthly Savings" />
+            </div>
+
+            <div class="accountfield">
+                <label>Account Type</label>
+                <InputSelect @bind-Value="_model.AccountType">
+                    <option value="">Pick type</option>
+                    <option value="@AccountType.Deposit">Deposit Account</option>
+                    <option value="@AccountType.Savings">Savings Account</option>
+                </InputSelect>
+            </div>
+
+            <div class="accountfield">
+                <label>Currency</label>
+                <InputSelect @bind-Value="_model.CurrencyType">
+                    <option value="">Pick type</option>
+                    <option value="@CurrencyType.SEK">SEK</option>
+                </InputSelect>
+            </div>
+
+            <div class="accountfield">
+                <label>Initial Balance</label>
+                <InputNumber @bind-Value="_model.InitialBalance" placeholder="0.00" />
+            </div>
+
+            <button class="formbutton" type="submit">Create Account</button>
+
+            @if (!string.IsNullOrEmpty(_message))
             {
-                <p>See your created accounts under <strong><a href="MyAccounts">My Accounts</a></strong>.</p>
+                <div style="margin-top: 1rem;">
+                    <p class="@(_isSuccess ? "success-message" : "error-message")">@_message</p>
+                    @if (_isSuccess)
+                    {
+                        <p style="margin-top: 0.5rem;">See your created accounts under <strong><a href="MyAccounts">My Accounts</a></strong>.</p>
+                    }
+                </div>
             }
-        }
+        </EditForm>
     </div>
-</EditForm>
+</div>
 
 @code {
     // Variable holding user input for creating account
     private readonly CreateAccountModel _model = new();
-    
+
     // Existing accounts
     private List<IBankAccount> _accounts = new();
-    
+
     // Status message that gets assigned different values depending on validation
     private string? _message;
-    
+
     // Indicates whether account creation is successful or not
     private bool _isSuccess;
 
@@ -104,7 +103,7 @@
             _isSuccess = false;
             return;
         }
-        
+
         try
         {
             // Creating account
@@ -151,4 +150,3 @@
         }
     }
 }
-

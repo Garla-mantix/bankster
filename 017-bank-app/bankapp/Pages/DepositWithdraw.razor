@@ -3,76 +3,76 @@
 
 <PageTitle>Bankster - Deposit / Withdraw</PageTitle>
 
-<h1>Deposit / Withdraw</h1>
+<div class="page-enter">
+    <div class="card">
+        <div class="card-header-section">
+            <h1>Deposit / Withdraw</h1>
+            <p class="card-subtitle">Add or remove funds from your accounts</p>
+        </div>
 
-@*Form for deposits/withdrawals*@
-<EditForm Model="_model" OnValidSubmit="SubmitTransactionAsync">
-    <DataAnnotationsValidator />
-    <ValidationSummary />
-    
-    @*Dropdown menu for choosing between existing accounts*@
-    <div class="accountfield">
-        <label>Select Account:</label>
-        <InputSelect class="inputfield" @bind-Value="_model.SelectedAccountId">
-            <option value="@Guid.Empty">Choose account</option>
-            @foreach (var account in _accounts)
-            {
-                <option value="@account.Id">
-                    @account.Name (@account.Balance.ToString("F2") @account.CurrencyType)
-                </option>
-            }
-        </InputSelect>
-    </div>
-    
-    @*Dropdown menu for transaction types*@
-    <div class="accountfield">
-        <label>Transaction Type:</label>
-        <InputSelect class="inputfield" @bind-Value="_model.TransactionType">
-            <option value="">Choose type</option>
-            <option value="@TransactionType.Deposit">Deposit</option>
-            <option value="@TransactionType.Withdrawal">Withdraw</option>
-        </InputSelect>
-    </div>
-    
-    @*Dropdown menu for budget categories (visible on withdrawal)*@
-    <div class="accountfield" hidden="@(_model.TransactionType != TransactionType.Withdrawal)">
-        <label>Category:</label>
-        <InputSelect class="inputfield" @bind-Value="_model.Category">
-            @foreach (var category in Enum.GetValues<BudgetCategory>())
-            {
-                <option value="@category">@category</option>
-            }
-        </InputSelect>
-    </div>
-    
-    @*Label and input field for amount to be transfered*@
-    <div class="accountfield">
-        <label>Amount:</label>
-        <InputNumber class="inputfield" @bind-Value="_model.Amount" />
-    </div>
-    
-    @*Button for making transaction*@
-    <button class="formbutton" type="submit">Apply</button>
-</EditForm>
+        <EditForm Model="_model" OnValidSubmit="SubmitTransactionAsync">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
 
-@*Sucess or error message*@
-@if (!string.IsNullOrEmpty(_message))
-{
-    <div class="accountfield">
-        <p class="@(_isSuccess ? "success-message" : "error-message")">@_message</p>
+            <div class="accountfield">
+                <label>Select Account</label>
+                <InputSelect @bind-Value="_model.SelectedAccountId">
+                    <option value="@Guid.Empty">Choose account</option>
+                    @foreach (var account in _accounts)
+                    {
+                        <option value="@account.Id">
+                            @account.Name (@account.Balance.ToString("F2") @account.CurrencyType)
+                        </option>
+                    }
+                </InputSelect>
+            </div>
+
+            <div class="accountfield">
+                <label>Transaction Type</label>
+                <InputSelect @bind-Value="_model.TransactionType">
+                    <option value="">Choose type</option>
+                    <option value="@TransactionType.Deposit">Deposit</option>
+                    <option value="@TransactionType.Withdrawal">Withdraw</option>
+                </InputSelect>
+            </div>
+
+            <div class="accountfield" hidden="@(_model.TransactionType != TransactionType.Withdrawal)">
+                <label>Category</label>
+                <InputSelect @bind-Value="_model.Category">
+                    @foreach (var category in Enum.GetValues<BudgetCategory>())
+                    {
+                        <option value="@category">@category</option>
+                    }
+                </InputSelect>
+            </div>
+
+            <div class="accountfield">
+                <label>Amount</label>
+                <InputNumber @bind-Value="_model.Amount" />
+            </div>
+
+            <button class="formbutton" type="submit">Apply</button>
+        </EditForm>
+
+        @if (!string.IsNullOrEmpty(_message))
+        {
+            <div style="margin-top: 1rem;">
+                <p class="@(_isSuccess ? "success-message" : "error-message")">@_message</p>
+            </div>
+        }
     </div>
-}
+</div>
 
 @code {
     // Variable storing data for current transaction
     private readonly TransactionModel _model = new();
-    
+
     // List of existing accounts
     private List<IBankAccount> _accounts = new();
-    
+
     // Status message that gets assigned different values depending on validation
     private string? _message;
-    
+
     // Indicates whether transaction went through or not
     private bool _isSuccess;
 
@@ -106,7 +106,7 @@
             _isSuccess = false;
             return;
         }
-        
+
         try
         {
             var selectedAccountId = _model.SelectedAccountId;
@@ -131,7 +131,7 @@
                     _isSuccess = false;
                     return;
             }
-            
+
             await LoadAccountsAsync();
             _model.SelectedAccountId = selectedAccountId;
             _model.Amount = null;

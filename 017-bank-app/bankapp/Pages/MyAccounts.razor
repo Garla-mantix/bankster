@@ -5,92 +5,96 @@
 
 <PageTitle>Bankster - My Accounts</PageTitle>
 
-<h1>Your Accounts</h1>
+<div class="page-enter">
+    <h1>Your Accounts</h1>
+    <p style="margin-bottom: 2rem;">Click any account to view its transaction history.</p>
 
-@*Checking if there are any existing accounts at all*@
-@if ((_depositAccounts.Count + _savingsAccounts.Count) == 0)
-{
-    <p>You have no accounts yet.</p>
-    <p>Go to <a href="/CreateAccount"><strong>Create Account</strong></a> to get started!</p>
-}
-else
-{
-    <h3>Deposit Accounts</h3>
-    
-    // Checking if there are any deposit accounts
-    @if (_depositAccounts.Count == 0)
+    @if ((_depositAccounts.Count + _savingsAccounts.Count) == 0)
     {
-        <p>No deposit accounts yet.</p>
+        <div class="empty-state">
+            <div class="empty-icon"><span class="bi bi-wallet2"></span></div>
+            <p>You have no accounts yet.</p>
+            <p>Go to <a href="/CreateAccount"><strong>Create Account</strong></a> to get started!</p>
+        </div>
     }
     else
     {
-        // Listing all deposit accounts
-        <table class="table account-table">
-            <thead>
-            <tr>
-                <th>Name</th>
-                <th>Balance</th>
-                <th>Currency</th>
-                <th>Interest Rate</th>
-                <th>Last Updated</th>
-            </tr>
-            </thead>
-            <tbody>
-            @foreach (var account in _depositAccounts)
-            {
-                <tr class="select-acc" @onclick="() => NavigateToHistory(account.Id)">
-                    <td><strong>@account.Name</strong></td>
-                    <td>@account.Balance.ToString("F2")</td>
-                    <td>@account.CurrencyType</td>
-                    <td>@account.InterestRate.ToString("P1")</td>
-                    <td>@(account.LastUpdated != default ? account.LastUpdated.ToLocalTime().ToString("d'/'M/yyyy (HH:mm)") : "N/A")</td>
-                </tr>
-            }
-            </tbody>
-        </table>
+        <h3>Deposit Accounts</h3>
 
-    }
+        @if (_depositAccounts.Count == 0)
+        {
+            <p style="margin-bottom: 2rem;">No deposit accounts yet.</p>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table account-table">
+                    <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Balance</th>
+                        <th>Currency</th>
+                        <th>Interest Rate</th>
+                        <th>Last Updated</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @foreach (var account in _depositAccounts)
+                    {
+                        <tr class="select-acc" @onclick="() => NavigateToHistory(account.Id)">
+                            <td><strong>@account.Name</strong></td>
+                            <td>@account.Balance.ToString("F2")</td>
+                            <td>@account.CurrencyType</td>
+                            <td>@account.InterestRate.ToString("P1")</td>
+                            <td>@(account.LastUpdated != default ? account.LastUpdated.ToLocalTime().ToString("d'/'M/yyyy (HH:mm)") : "N/A")</td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        }
 
-    <h3>Savings Accounts</h3>
-    
-    // Checking if there are any existing savings accounts
-    @if (_savingsAccounts.Count == 0)
-    {
-        <p>No savings accounts yet.</p>
+        <h3 class="subhead">Savings Accounts</h3>
+
+        @if (_savingsAccounts.Count == 0)
+        {
+            <p>No savings accounts yet.</p>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table account-table">
+                    <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Balance</th>
+                        <th>Currency</th>
+                        <th>Interest Rate</th>
+                        <th>Last Updated</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @foreach (var account in _savingsAccounts)
+                    {
+                        <tr class="select-acc" @onclick="() => NavigateToHistory(account.Id)">
+                            <td><strong>@account.Name</strong></td>
+                            <td>@account.Balance.ToString("F2")</td>
+                            <td>@account.CurrencyType</td>
+                            <td>@account.InterestRate.ToString("P1")</td>
+                            <td>@(account.LastUpdated != default ? account.LastUpdated.ToLocalTime().ToString("d'/'M/yyyy (HH:mm)") : "N/A")</td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        }
     }
-    else
-    {
-        // Listing all savings accounts
-        <table class="table account-table">
-            <thead>
-            <tr>
-                <th>Name</th>
-                <th>Balance</th>
-                <th>Currency</th>
-                <th>Interest Rate</th>
-                <th>Last Updated</th>
-            </tr>
-            </thead>
-            <tbody>
-            @foreach (var account in _savingsAccounts)
-            {
-                <tr class="select-acc" @onclick="() => NavigateToHistory(account.Id)">
-                    <td><strong>@account.Name</strong></td>
-                    <td>@account.Balance.ToString("F2")</td>
-                    <td>@account.CurrencyType</td>
-                    <td>@account.InterestRate.ToString("P1")</td>
-                    <td>@(account.LastUpdated != default ? account.LastUpdated.ToLocalTime().ToString("d'/'M/yyyy (HH:mm)") : "N/A")</td>
-                </tr>
-            }
-            </tbody>
-        </table>
-    }
-}
+</div>
 
 @code {
     // List for existing deposit accounts
     private List<IBankAccount> _depositAccounts = new();
-    
+
     // List for existing savings accounts
     private List<IBankAccount> _savingsAccounts = new();
 
@@ -99,7 +103,7 @@ else
     {
         // Apply interest
         await AccountService.ApplyYearlyInterestAsync();
-        
+
         // Fetch all accounts from the service
         var allAccounts = await AccountService.GetAccounts() ?? new List<IBankAccount>();
 
@@ -112,7 +116,7 @@ else
             .Where(a => a.AccountType == AccountType.Savings)
             .ToList();
     }
-    
+
     // Navigate to History with account selected
     private void NavigateToHistory(Guid accountId)
     {

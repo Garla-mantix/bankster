@@ -3,90 +3,89 @@
 
 <PageTitle>Bankster - Transfer</PageTitle>
 
-<h1>Transfer</h1>
+<div class="page-enter">
+    <div class="card">
+        <div class="card-header-section">
+            <h1>Transfer</h1>
+            <p class="card-subtitle">Move money between your accounts</p>
+        </div>
 
-@*Form for transfers between accounts*@
-<EditForm Model="_model" OnValidSubmit="SubmitTransferAsync">
-    <DataAnnotationsValidator />
-    <ValidationSummary />
+        <EditForm Model="_model" OnValidSubmit="SubmitTransferAsync">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
 
-    @*Label and dropdown menu for from-account*@
-    <div class="accountfield">
-        <label>From Account:</label>
-        <InputSelect TValue="Guid" class="inputfield"
-                     Value="_model.FromAccountId"
-                     ValueChanged="OnFromAccountChanged"
-                     ValueExpression="() => _model.FromAccountId">
-            <option value="@Guid.Empty">Select from account</option>
-            @foreach (var account in _accounts)
-            {
-                <option value="@account.Id">@account.Name (@account.Balance.ToString("F2") @account.CurrencyType)</option>
-            }
-        </InputSelect>
+            <div class="accountfield">
+                <label>From Account</label>
+                <InputSelect TValue="Guid"
+                             Value="_model.FromAccountId"
+                             ValueChanged="OnFromAccountChanged"
+                             ValueExpression="() => _model.FromAccountId">
+                    <option value="@Guid.Empty">Select from account</option>
+                    @foreach (var account in _accounts)
+                    {
+                        <option value="@account.Id">@account.Name (@account.Balance.ToString("F2") @account.CurrencyType)</option>
+                    }
+                </InputSelect>
+            </div>
+
+            <div class="accountfield">
+                <label>To Account</label>
+                <InputSelect @key="_model.FromAccountId"
+                             TValue="Guid"
+                             Value="_model.ToAccountId"
+                             ValueChanged="(Guid v) => _model.ToAccountId = v"
+                             ValueExpression="() => _model.ToAccountId"
+                             disabled="@(_model.FromAccountId == Guid.Empty)">
+                    <option value="@Guid.Empty">Choose account</option>
+                    @foreach (var account in _accounts.Where(a => a.Id != _model.FromAccountId))
+                    {
+                        <option value="@account.Id">
+                            @account.Name (@account.Balance.ToString("F2") @account.CurrencyType)
+                        </option>
+                    }
+                </InputSelect>
+            </div>
+
+            <div class="accountfield">
+                <label>Amount</label>
+                <InputNumber TValue="decimal?"
+                             Value="_model.Amount"
+                             ValueChanged="(decimal? v) => _model.Amount = v"
+                             ValueExpression="() => _model.Amount" />
+            </div>
+
+            <div class="accountfield">
+                <label>Category (optional)</label>
+                <InputSelect @bind-Value="_model.Category">
+                    @foreach (var category in Enum.GetValues<BudgetCategory>())
+                    {
+                        <option value="@category">@category</option>
+                    }
+                </InputSelect>
+            </div>
+
+            <button class="formbutton" type="submit">Transfer</button>
+        </EditForm>
+
+        @if (!string.IsNullOrEmpty(_message))
+        {
+            <div style="margin-top: 1rem;">
+                <p class="@(_isSuccess ? "success-message" : "error-message")">@_message</p>
+            </div>
+        }
     </div>
-
-    @*Label and dropdown menu for to-account*@
-    <div class="accountfield">
-        <label>To Account:</label>
-        <InputSelect @key="_model.FromAccountId"
-                     TValue="Guid"
-                     class="inputfield"
-                     Value="_model.ToAccountId"
-                     ValueChanged="(Guid v) => _model.ToAccountId = v"
-                     ValueExpression="() => _model.ToAccountId"
-                     disabled="@(_model.FromAccountId == Guid.Empty)">
-            <option value="@Guid.Empty">Choose account</option>
-            @foreach (var account in _accounts.Where(a => a.Id != _model.FromAccountId))
-            {
-                <option value="@account.Id">
-                    @account.Name (@account.Balance.ToString("F2") @account.CurrencyType)
-                </option>
-            }
-        </InputSelect>
-    </div>
-
-    @*Label and input field for amount*@
-    <div class="accountfield">
-        <label>Amount:</label>
-        <InputNumber TValue="decimal?" class="inputfield"
-                     Value="_model.Amount"
-                     ValueChanged="(decimal? v) => _model.Amount = v"
-                     ValueExpression="() => _model.Amount" />
-    </div>
-    
-    @*Label and dropdown menu for budget categories*@
-    <div class="accountfield">
-        <label>Category (optional):</label>
-        <InputSelect class="inputfield" @bind-Value="_model.Category">
-            @foreach (var category in Enum.GetValues<BudgetCategory>())
-            {
-                <option value="@category">@category</option>
-            }
-        </InputSelect>
-    </div>
-
-    @*Button for executing transfer*@
-    <button class="formbutton" type="submit">Transfer</button>
-</EditForm>
-
-@*Success or error message*@
-@if (!string.IsNullOrEmpty(_message))
-{
-    <div class="accountfield">
-        <p class="@(_isSuccess ? "success-message" : "error-message")">@_message</p>
-    </div>
-}
+</div>
 
 @code {
     // Variable holding data for the current transfer
     private readonly TransferModel _model = new();
-    
+
     // List of existing accounts
     private List<IBankAccount> _accounts = new();
-    
+
     // Status message that gets assigned different values depending on validation
     private string? _message;
-    
+
     // Indicates whether transfer went through or not
     private bool _isSuccess;
 
@@ -145,7 +144,7 @@
 
             // Refresh balances
             await LoadAccountsAsync();
-            
+
             // Reset to-account and amount after transfer
             _model.ToAccountId = Guid.Empty;
             _model.Amount = null;
@@ -158,7 +157,7 @@
             _isSuccess = false;
         }
     }
-    
+
     // Make sure to-account is changed when new from-account is selected
     private void OnFromAccountChanged(Guid selectedId)
     {
@@ -166,7 +165,7 @@
         _model.ToAccountId = Guid.Empty;
         StateHasChanged();
     }
-    
+
     /// <summary>
     /// Model storing selected accounts and transfer amount.
     /// </summary>
