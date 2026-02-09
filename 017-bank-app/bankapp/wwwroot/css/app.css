@@ -12,20 +12,21 @@
     --bg-card-hover: #232738;
     --bg-input: #111420;
     --border-color: #2a2e3f;
-    --border-focus: #34d399;
+    --border-focus: #7ba884;
     --text-primary: #e8eaf0;
     --text-secondary: #8b91a8;
     --text-muted: #565c73;
-    --accent: #34d399;
-    --accent-dim: rgba(52, 211, 153, 0.12);
-    --accent-glow: rgba(52, 211, 153, 0.25);
+    --accent: #7ba884;
+    --accent-dim: rgba(123, 168, 132, 0.12);
+    --accent-glow: rgba(123, 168, 132, 0.25);
+    --accent-hover: #8ebf96;
     --danger: #f87171;
     --danger-dim: rgba(248, 113, 113, 0.12);
     --warning: #fbbf24;
     --info: #60a5fa;
     --info-dim: rgba(96, 165, 250, 0.12);
-    --deposit-bg: rgba(52, 211, 153, 0.08);
-    --deposit-border: rgba(52, 211, 153, 0.2);
+    --deposit-bg: rgba(123, 168, 132, 0.08);
+    --deposit-border: rgba(123, 168, 132, 0.2);
     --withdrawal-bg: rgba(248, 113, 113, 0.08);
     --withdrawal-border: rgba(248, 113, 113, 0.2);
     --transfer-bg: rgba(96, 165, 250, 0.08);
@@ -68,25 +69,23 @@ html, body {
     background: var(--bg-primary);
 }
 
-.loading-logo {
-    font-family: var(--font-body);
-    font-size: 3rem;
-    font-weight: 700;
-    color: var(--accent);
-    width: 4.5rem;
-    height: 4.5rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 2px solid var(--accent);
-    border-radius: var(--radius-md);
+.loading-logo-img {
+    width: 6rem;
+    height: auto;
     margin-bottom: 2rem;
     animation: pulse-glow 2s ease-in-out infinite;
+    border-radius: var(--radius-md);
 }
 
 @keyframes pulse-glow {
-    0%, 100% { box-shadow: 0 0 0 0 var(--accent-glow); }
-    50% { box-shadow: 0 0 20px 8px var(--accent-glow); }
+    0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.8;
+        transform: scale(1.05);
+    }
 }
 
 .loading-progress {
@@ -154,7 +153,7 @@ a, .btn-link {
 }
 
 a:hover, .btn-link:hover {
-    color: #6ee7b7;
+    color: var(--accent-hover);
 }
 
 h1:focus {
@@ -300,7 +299,7 @@ h1:focus {
 }
 
 .formbutton:hover {
-    background: #6ee7b7;
+    background: var(--accent-hover);
     box-shadow: 0 0 16px var(--accent-glow);
     transform: translateY(-1px);
 }
@@ -317,7 +316,7 @@ h1:focus {
 }
 
 .btn-primary:hover {
-    background: #6ee7b7;
+    background: var(--accent-hover);
 }
 
 .btn-secondary {
@@ -334,8 +333,9 @@ h1:focus {
 }
 
 .btn-secondary:hover {
-    border-color: var(--text-secondary);
-    color: var(--text-primary);
+    border-color: var(--accent);
+    color: var(--accent);
+    background: var(--accent-dim);
 }
 
 .btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
@@ -374,7 +374,6 @@ h1:focus {
     border-spacing: 0;
     margin-bottom: 0;
     border-radius: var(--radius-md);
-    overflow: hidden;
     border: 1px solid var(--border-color);
 }
 
@@ -461,10 +460,14 @@ h1:focus {
 /* ── Clickable Account Rows ── */
 .select-acc {
     cursor: pointer;
+    transition: all var(--transition);
+    position: relative;
 }
 
 .select-acc:hover {
     background: var(--bg-card-hover) !important;
+    outline: 2px solid var(--accent);
+    outline-offset: -2px;
 }
 
 /* ── Validation ── */
@@ -636,19 +639,12 @@ code {
     animation: fadeUp 0.5s ease-out;
 }
 
-.signin-logo {
-    font-family: var(--font-body);
-    font-size: 2rem;
-    font-weight: 700;
-    color: var(--accent);
-    width: 3.5rem;
-    height: 3.5rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 2px solid var(--accent);
-    border-radius: var(--radius-sm);
+.signin-logo-img {
+    width: 5rem;
+    height: auto;
+    display: block;
     margin: 0 auto 1.5rem;
+    border-radius: var(--radius-md);
 }
 
 .signin-title {
@@ -727,7 +723,6 @@ code {
     margin-top: 1.5rem;
     margin-bottom: 2rem;
     border-radius: var(--radius-md);
-    overflow: hidden;
     border: 1px solid var(--border-color);
     font-size: 0.88rem;
 }
@@ -897,7 +892,7 @@ code {
         padding-top: 3rem;
     }
 }
-}
+
 
 @media (min-width: 641px) and (max-width: 1024px) {
     .feature-grid {
