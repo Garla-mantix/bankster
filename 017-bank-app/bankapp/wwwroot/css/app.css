@@ -343,11 +343,36 @@ h1:focus {
 }
 
 /* ── Tables ── */
+.table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin-bottom: 2rem;
+    border-radius: var(--radius-md);
+    position: relative;
+}
+
+.table-responsive::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 30px;
+    background: linear-gradient(to left, var(--bg-primary) 0%, transparent 100%);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity var(--transition);
+}
+
+.table-responsive:not(:hover)::after {
+    opacity: 0.7;
+}
+
 .account-table {
     width: 100%;
     border-collapse: separate;
     border-spacing: 0;
-    margin-bottom: 1.5rem;
+    margin-bottom: 0;
     border-radius: var(--radius-md);
     overflow: hidden;
     border: 1px solid var(--border-color);
@@ -514,6 +539,7 @@ code {
     grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
     gap: 1rem;
     margin-top: 1.5rem;
+    margin-bottom: 2rem;
 }
 
 .feature-card {
@@ -791,6 +817,7 @@ code {
 @media (max-width: 640px) {
     .feature-grid {
         grid-template-columns: 1fr;
+        margin-bottom: 3rem;
     }
 
     .stats-row {
@@ -807,17 +834,102 @@ code {
 
     .card {
         padding: 1.25rem;
+        padding-bottom: 4rem;
+        margin-bottom: 2rem;
     }
 
+    .accountfield:has(select) {
+        margin-bottom: 2rem;
+    }
+
+    /* ── Mobile Table Improvements ── */
     .account-table,
     .history-table {
         font-size: 0.8rem;
+        min-width: 100%;
+        display: table;
     }
 
     .account-table th,
     .account-table td,
     .history-table th,
     .history-table td {
-        padding: 0.6rem 0.65rem;
+        padding: 0.75rem 0.5rem;
+        white-space: nowrap;
+    }
+
+    /* Hide less critical columns on mobile for account-table */
+    .account-table th:nth-child(3),
+    .account-table td:nth-child(3),
+    .account-table th:nth-child(4),
+    .account-table td:nth-child(4) {
+        display: none;
+    }
+
+    /* Hide less critical columns on mobile for history-table */
+    .history-table th:nth-child(2),
+    .history-table td:nth-child(2),
+    .history-table th:nth-child(4),
+    .history-table td:nth-child(4),
+    .history-table th:nth-child(6),
+    .history-table td:nth-child(6),
+    .history-table th:nth-child(7),
+    .history-table td:nth-child(7) {
+        display: none;
+    }
+
+    .table-responsive {
+        box-shadow: inset -10px 0 10px -10px rgba(0,0,0,0.3);
+        margin-bottom: 2.5rem;
+        padding-bottom: 0.5rem;
+    }
+
+    .table-responsive table {
+        margin-right: 1rem;
+    }
+
+    .page-enter .table-responsive:last-of-type {
+        margin-bottom: 3rem;
+    }
+
+    /* Ensure last section has more breathing room */
+    .subhead {
+        padding-top: 3rem;
+    }
+}
+}
+
+@media (min-width: 641px) and (max-width: 1024px) {
+    .feature-grid {
+        margin-bottom: 2.5rem;
+    }
+
+    .card {
+        padding-bottom: 3rem;
+    }
+
+    .accountfield:has(select) {
+        margin-bottom: 1.75rem;
+    }
+
+    /* ── Tablet Table Improvements ── */
+    .account-table,
+    .history-table {
+        font-size: 0.85rem;
+    }
+
+    .account-table th,
+    .account-table td,
+    .history-table th,
+    .history-table td {
+        padding: 0.7rem 0.75rem;
+    }
+
+    /* Hide some columns on tablets for history-table */
+    .history-table th:nth-child(4),
+    .history-table td:nth-child(4),
+    .history-table th:nth-child(7),
+    .history-table td:nth-child(7) {
+        display: none;
     }
 }
